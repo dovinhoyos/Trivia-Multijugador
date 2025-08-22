@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { JoinRoom } from "./components/JoinRoom";
+import { CreateRoom } from "./components/CreateRoom";
 
 export default function App() {
   const [mode, setMode] = useState<"moderator" | "player" | null>(null);
@@ -14,8 +15,8 @@ export default function App() {
         </div>
       )}
 
+      {mode === "moderator" && <CreateRoom />}
       {mode === "player" && <JoinRoom />}
-      {mode === "moderator" && <div>⚡ Pantalla moderador (ya hecha)</div>}
     </div>
   );
 }
