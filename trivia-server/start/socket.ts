@@ -38,6 +38,7 @@ app.ready(() => {
       }
 
       rooms.set(code, room)
+      socket.join(code)
       console.log(`🎲 Sala creada: ${code}`)
 
       callback({ code })

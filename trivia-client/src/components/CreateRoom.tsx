@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Copy } from "lucide-react";
 
 const socket = io("http://localhost:3333");
@@ -19,12 +20,6 @@ export function CreateRoom() {
   const createRoom = () => {
     socket.emit("moderator:createRoom", {}, (response: { code: string }) => {
       setRoomCode(response.code);
-      // Nos unimos al "room" para recibir actualizaciones
-      socket.emit(
-        "player:joinRoom",
-        { code: response.code, nickname: "MODERADOR" },
-        () => {},
-      );
     });
   };
 
@@ -48,7 +43,7 @@ export function CreateRoom() {
   return (
     <Card className="w-[400px]">
       <CardHeader>
-        <CardTitle>Moderador - Crear Sala</CardTitle>
+        <CardTitle>Moderador - Sala</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {!roomCode ? (
@@ -58,7 +53,11 @@ export function CreateRoom() {
         ) : (
           <>
             <div className="flex items-center gap-2">
-              <Input value={roomCode} readOnly className="text-center" />
+              <Input
+                value={roomCode}
+                readOnly
+                className="text-center font-mono"
+              />
               <Button
                 variant="outline"
                 size="icon"
@@ -69,19 +68,28 @@ export function CreateRoom() {
               </Button>
             </div>
 
-            {players.length > 0 && (
-              <div>
-                <p className="font-semibold mb-2">👥 Jugadores conectados:</p>
-                <ul className="list-disc ml-5">
+            <div className="mt-4 space-y-2">
+              <p className="font-semibold flex items-center gap-2">
+                👑 Moderador <Badge variant="secondary">Tú</Badge>
+              </p>
+
+              <p className="font-semibold mt-4">👥 Jugadores conectados:</p>
+              {players.length === 0 ? (
+                <p className="text-sm text-gray-500">Esperando jugadores...</p>
+              ) : (
+                <ul className="space-y-1">
                   {players.map((p) => (
-                    <li key={p.nickname}>
-                      {p.nickname}{" "}
-                      <span className="text-gray-500">(score: {p.score})</span>
+                    <li
+                      key={p.nickname}
+                      className="flex justify-between items-center border-b pb-1"
+                    >
+                      <span>{p.nickname}</span>
+                      <Badge variant="outline">Score: {p.score}</Badge>
                     </li>
                   ))}
                 </ul>
-              </div>
-            )}
+              )}
+            </div>
           </>
         )}
       </CardContent>
